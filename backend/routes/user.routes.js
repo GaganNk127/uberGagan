@@ -17,6 +17,8 @@ router.post('/login', [
 ], userController.loginUser);
 
 
+
+
 router.get('/logout',authUser.authUser,userController.logoutUser)
 
 router.get('/profile',authUser.authUser,userController.getUserProfile);
