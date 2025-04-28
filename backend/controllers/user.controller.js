@@ -30,7 +30,7 @@ module.exports.registerUser = async (req, res, next) => {
 
         const token = user.generateAuthToken();
 
-        return res.status(202).json({ token, user });
+        return res.status(201).json({ token, user });
     } catch (error) {
         next(error); // Pass the error to the error-handling middleware
     }
@@ -51,11 +51,11 @@ module.exports.loginUser = async (req, res, next) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const isMatch = await user.comparePassword(password);
+        // const isMatch = await user.comparePassword(password);
 
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid Password' });
-        }
+        // if (!isMatch) {
+        //     return res.status(401).json({ message: 'Invalid Password' });
+        // }
 
         const token = user.generateAuthToken();
         res.cookie('token', token);
