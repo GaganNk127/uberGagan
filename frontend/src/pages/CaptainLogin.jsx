@@ -1,22 +1,45 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react'
+import { Link, Navigate } from 'react-router-dom';
 import  { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { CaptainDataContext } from '../context/CaptainContext';
+
+
+
 
 function CaptainLogin() {
-  const [email,setEmail] = useState('');
-      const [password,setpassword] = useState(' ');
-      const [captainData, setcaptainData] = useState(' ');
-      const submitHandler = (e)=>{
-          e.preventDefault();
-          setcaptainData({
-              email:email,
-              password : password
-          })
-          console.log(captainData)
-          setEmail(' ');
-          setpassword(' ');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+ const { updateCaptain } = useContext(CaptainDataContext);
+
+  const navigate = useNavigate();
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captain/login`,
+        { email, password }
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        updateCaptain(data.captain);
+        localStorage.setItem('token', data.token);
+        console.log('navigate Succesfull')
+        navigate('/captain-home');
       }
-  
+    } catch (err) {
+      setError('Login failed. Please check your credentials.');
+    }
+
+    setEmail('');
+    setPassword('');
+  };
     return (
       <div className='p-7 flex flex-col  justify-between'>
              <div>
@@ -36,7 +59,7 @@ function CaptainLogin() {
               <input className='bg-[#eeeeee] px-2 py-3 text-lg w-full rounded '
               value={password}
               onChange={(e)=>{
-                  setpassword(e.target.value)
+                  setPassword(e.target.value)
               }}
               required type="password" 
               placeholder='paswword'/>
