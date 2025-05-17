@@ -3,6 +3,10 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import 'remixicon/fonts/remixicon.css'
 import LocationSearchPannel from '../components/LocationSearchPannel'
+import VehiclePanel from '../components/VehiclePanel'
+import Confirmedride from '../components/Confirmedride'
+import LookRider from '../components/LookRider'
+import WaitingDriver from '../components/WaitingDriver'
 
 function Home() {
   const [pickup, setPickup] = useState('')
@@ -12,8 +16,13 @@ function Home() {
   const ArrowRef = useRef(null)
   const [vehiclePannel, setvehiclePannel] = useState(false)
   const Vehicle = useRef();
+  const Confirm = useRef();
+  const Look = useRef();
   const [isOpen, setIsOpen] = useState(false);
-
+  const [Confirmedridepanel, setConfirmedridepanel] = useState(false)
+  const [WaitDriver, setWaitDriver] = useState(false)
+  const [LookRide, setLookRide] = useState(false)
+  const WaitDrive = useRef();
   // Animate panel open/close
   useGSAP(() => {
     if (panelOpen) {
@@ -46,6 +55,32 @@ function Home() {
     });
   }, [vehiclePannel]);
 
+   useGSAP(() => {
+    gsap.to(Confirm.current, {
+      y: Confirmedridepanel ? 'translateY(0%)' : "100%",
+      duration: 0.4,
+      ease: "power2.inOut"
+    });
+  }, [Confirmedridepanel]);
+
+  useGSAP(() => {
+    gsap.to(Look.current, {
+      y: LookRide ? 'translateY(0%)' : "100%",
+      duration: 0.4,
+      ease: "power2.inOut"
+    });
+  }, [LookRide]);
+
+// waiting Driver
+  useGSAP(() => {
+    gsap.to(WaitDrive.current, {
+      y: WaitDriver ? 'translateY(0%)' : "100%",
+      duration: 0.4,
+      ease: "power2.inOut"
+    });
+  }, [WaitDriver]);
+
+
   
 
   return (
@@ -68,11 +103,13 @@ function Home() {
       {/* Input Form */}
       <form
         onSubmit={(e) => e.preventDefault()}
-        className='absolute 
+        className='relative
         top-24 left-1/2 transform -translate-x-1/2 w-11/12 max-w-md z-20 bg-white p-4 rounded-xl shadow-lg outline-yellow-400'
       >
         <h5 className='opacity-0 mb-4 mx-60 w-4 ' onClick={()=>{
           setPanelOpen(false)
+          setvehiclePannel(false)
+          setConfirmedridepanel(false)
         }} ref={ArrowRef}>
           <i className="ri-arrow-down-s-fill"></i>
         </h5>
@@ -104,54 +141,53 @@ function Home() {
       {/* Sliding Panel */}
       <div
   ref={paneRef}
-  className='absolute bottom-0 left-0 w-full h-screen z-10'
+  className='absolute bottom-0 left-0 w-full h-screen z-[9999]'
 >
-  <LocationSearchPannel vehiclePannel={vehiclePannel} setvehiclePannel={setvehiclePannel} />
+  <LocationSearchPannel 
+    panelOpen={panelOpen} 
+    setPanelOpen={setPanelOpen} 
+    vehiclePannel={vehiclePannel} 
+    setvehiclePannel={setvehiclePannel} 
+  />
 </div>
 
     <div
   ref={Vehicle}
-  className='bg-white w-full fixed z-50 bottom-0 p-5 py-3 flex flex-col gap-4'
+  className='bg-white w-full fixed z-50 bottom-0 p-5 py-3 flex flex-col gap-4 z-[9999]'
   style={{ transform: 'translateY(100%)' }} // Initial position hidden
 >
 
         <h3 className='text-2xl font-bold my-1'>Choose a vehicle</h3>
 
         {/* UberGo */}
-        <div className='w-full flex justify-between items-center border-black outline rounded-xl'>
-          <img className='h-12' src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1652995234/assets/92/8d4288-e896-4333-9bc2-c60c49f2a095/original/UberXL_Black_v2.png" alt="" />
-          <div className='w-1/2'>
-            <h4 className='font-medium text-sm'>UberGo <span><i className="ri-user-fill"></i> 4</span></h4>
-            <h5 className='font-medium text-sm'>2 mins Away</h5>
-            <p className='font-normal text-xs'>Affordable Compact price</p>
-          </div>
-          <h2 className='text-lg mx-4 font-semibold'>₹120.20</h2>
-        </div>
+       <VehiclePanel setvehiclePannel={setvehiclePannel} setConfirmedridepanel={setConfirmedridepanel}/>
+      </div>
+       <div
+       ref={Confirm}
+      className='bg-white w-full fixed z-50 bottom-0 p-5 py-6 pt-9 flex flex-col gap-4 z-[9999]'
+       style={{ transform: 'translateY(100%)' }} // Initial position hidden
+        >
+        {/* UberGo */}
+      <Confirmedride setConfirmedridepanel={setConfirmedridepanel} setLookRide={setLookRide} />
+      </div>
+       <div
+       ref={Look}
+      className='bg-white w-full fixed z-50 bottom-0 p-5 py-6 pt-9 flex flex-col gap-4 z-[9999]'
+       style={{ transform: 'translateY(100%)' }} // Initial position hidden
+        >
+          <LookRider setWaitDriver={setWaitDriver} />
+      </div>
 
-        {/* Bike */}
-        <div className='w-full flex justify-between items-center border-black outline rounded-xl'>
-          <img className='h-12' src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_538,w_956/v1698944322/assets/92/00189a-71c0-4f6d-a9de-1b6a85239079/original/UberMoto-India-Orange.png" alt="" />
-          <div className='w-1/2'>
-            <h4 className='font-medium text-sm'>Bike <span><i className="ri-user-fill"></i> 1</span></h4>
-            <h5 className='font-medium text-sm'>2 mins Away</h5>
-            <p className='font-normal text-xs'>Affordable Compact price</p>
-          </div>
-          <h2 className='text-lg mx-4 font-semibold'>₹42.00</h2>
-        </div>
-
-        {/* Auto */}
-        <div className='w-full flex justify-between items-center border-black outline rounded-xl'>
-          <img className='h-12' src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1648431773/assets/1d/db8c56-0204-4ce4-81ce-56a11a07fe98/original/Uber_Auto_558x372_pixels_Desktop.png" alt="" />
-          <div className='w-1/2'>
-            <h4 className='font-medium text-sm'>Uber Auto <span><i className="ri-user-fill"></i> 3</span></h4>
-            <h5 className='font-medium text-sm'>2 mins Away</h5>
-            <p className='font-normal text-xs'>Affordable Auto price</p>
-          </div>
-          <h2 className='text-lg mx-4 font-semibold'>₹95.00</h2>
-        </div>
+       <div
+       ref={WaitDrive}
+      className='bg-white w-full fixed z-50 bottom-0 p-5 py-6 pt-9 flex flex-col gap-4 z-[9999]'
+       style={{ transform: 'translateY(100%)' }} // Initial position hidden
+        >
+           <WaitingDriver  />
       </div>
         
     </div>
+    
   )
 }
 
